@@ -7,9 +7,8 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write  # Allow the workflow to write contents
+  pages: write     # Allow the workflow to push to GitHub Pages
 
 jobs:
   build:
@@ -24,19 +23,20 @@ jobs:
         with:
           node-version: 16
 
-      - name: Verify Node.js installation
-        run: node -v
-
       - name: Install dependencies
         run: npm install
 
       - name: Build the project
         run: npm run build
 
+      # Set up Git config before deployment
+      - name: Set up Git config
+        run: |
+          git config --global user.name "rusith-tharindu"
+          git config --global user.email "ruzistudios1997@gmail.com"
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
-          allow_empty_commit: true
-          force_orphan: true
